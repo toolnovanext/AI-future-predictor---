@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Future Predictor: a free AI astrologist.</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #FF5722;
+      text-align: center;
+    }
+    .header {
+      background: #FFEB3B;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .time-inputs {
+      display: flex;
+      gap: 10px;
+    }
+    .time-inputs input, .time-inputs select {
+      flex: 1;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+    #letsGoBtn {
+      background: #2196F3;
+      color: white;
+    }
+    #resetBtn {
+      background: #FF5722;
+      color: white;
+    }
+    #copyBtn {
+      background: #00FF00;
+      color: white;
+    }
+    #shareBtn {
+      background: #00BFFF;
+      color: white;
+    }
+    #downloadBtn {
+      background: #6200EE;
+      color: white;
+    }
+    #askBtn {
+      background: #2196F3;
+      color: white;
+    }
+    #askBtn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+    #responseArea {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      display: none;
+    }
+    #loading {
+      display: none;
+      text-align: center;
+      color: #2196F3;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    #conversationHeader {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Future Predictor</h1>
+    <div class="header">
+      <p>Hi, I am AI Future Predictor developed by SM Ripon, Sujan Rai, and Accessible Resource Team. I am here to predict your future. So, fill your details below and let me know what is going to be with you.</p>
+    </div>
+    <div class="form-group">
+      <label for="language">Select your preferred language:</label>
+      <select id="language">
+        <option value="">Select Language</option>
+        <option value="aa">Afar</option>
+        <option value="ab">Abkhazian</option>
+        <option value="ae">Avestan</option>
+        <option value="af">Afrikaans</option>
+        <option value="ak">Akan</option>
+        <option value="am">Amharic</option>
+        <option value="an">Aragonese</option>
+        <option value="ar">Arabic</option>
+        <option value="as">Assamese</option>
+        <option value="av">Avaric</option>
+        <option value="ay">Aymara</option>
+        <option value="az">Azerbaijani</option>
+        <option value="ba">Bashkir</option>
+        <option value="be">Belarusian</option>
+        <option value="bg">Bulgarian</option>
+        <option value="bh">Bihari</option>
+        <option value="bi">Bislama</option>
+        <option value="bm">Bambara</option>
+        <option value="bn">Bengali</option>
+        <option value="bo">Tibetan</option>
+        <option value="br">Breton</option>
+        <option value="bs">Bosnian</option>
+        <option value="ca">Catalan</option>
+        <option value="ce">Chechen</option>
+        <option value="ch">Chamorro</option>
+        <option value="co">Corsican</option>
+        <option value="cr">Cree</option>
+        <option value="cs">Czech</option>
+        <option value="cu">Church Slavic</option>
+        <option value="cv">Chuvash</option>
+        <option value="cy">Welsh</option>
+        <option value="da">Danish</option>
+        <option value="de">German</option>
+        <option value="dv">Divehi</option>
+        <option value="dz">Dzongkha</option>
+        <option value="ee">Ewe</option>
+        <option value="el">Greek</option>
+        <option value="en">English</option>
+        <option value="eo">Esperanto</option>
+        <option value="es">Spanish</option>
+        <option value="et">Estonian</option>
+        <option value="eu">Basque</option>
+        <option value="fa">Persian</option>
+        <option value="ff">Fulah</option>
+        <option value="fi">Finnish</option>
+        <option value="fj">Fijian</option>
+        <option value="fo">Faroese</option>
+        <option value="fr">French</option>
+        <option value="fy">Western Frisian</option>
+        <option value="ga">Irish</option>
+        <option value="gd">Scottish Gaelic</option>
+        <option value="gl">Galician</option>
+        <option value="gn">Guarani</option>
+        <option value="gu">Gujarati</option>
+        <option value="gv">Manx</option>
+        <option value="ha">Hausa</option>
+        <option value="he">Hebrew</option>
+        <option value="hi">Hindi</option>
+        <option value="ho">Hiri Motu</option>
+        <option value="hr">Croatian</option>
+        <option value="ht">Haitian</option>
+        <option value="hu">Hungarian</option>
+        <option value="hy">Armenian</option>
+        <option value="hz">Herero</option>
+        <option value="ia">Interlingua</option>
+        <option value="id">Indonesian</option>
+        <option value="ie">Interlingue</option>
+        <option value="ig">Igbo</option>
+        <option value="ii">Sichuan Yi</option>
+        <option value="ik">Inupiaq</option>
+        <option value="io">Ido</option>
+        <option value="is">Icelandic</option>
+        <option value="it">Italian</option>
+        <option value="iu">Inuktitut</option>
+        <option value="ja">Japanese</option>
+        <option value="jv">Javanese</option>
+        <option value="ka">Georgian</option>
+        <option value="kg">Kongo</option>
+        <option value="ki">Kikuyu</option>
+        <option value="kj">Kuanyama</option>
+        <option value="kk">Kazakh</option>
+        <option value="kl">Kalaallisut</option>
+        <option value="km">Khmer</option>
+        <option value="kn">Kannada</option>
+        <option value="ko">Korean</option>
+        <option value="kr">Kanuri</option>
+        <option value="ks">Kashmiri</option>
+        <option value="ku">Kurdish</option>
+        <option value="kv">Komi</option>
+        <option value="kw">Cornish</option>
+        <option value="ky">Kirghiz</option>
+        <option value="la">Latin</option>
+        <option value="lb">Luxembourgish</option>
+        <option value="lg">Ganda</option>
+        <option value="li">Limburgish</option>
+        <option value="ln">Lingala</option>
+        <option value="lo">Lao</option>
+        <option value="lt">Lithuanian</option>
+        <option value="lu">Luba-Katanga</option>
+        <option value="lv">Latvian</option>
+        <option value="mg">Malagasy</option>
+        <option value="mh">Marshallese</option>
+        <option value="mi">Maori</option>
+        <option value="mk">Macedonian</option>
+        <option value="ml">Malayalam</option>
+        <option value="mn">Mongolian</option>
+        <option value="mr">Marathi</option>
+        <option value="ms">Malay</option>
+        <option value="mt">Maltese</option>
+        <option value="my">Burmese</option>
+        <option value="na">Nauru</option>
+        <option value="nb">Norwegian Bokmål</option>
+        <option value="nd">North Ndebele</option>
+        <option value="ne">Nepali</option>
+        <option value="ng">Ndonga</option>
+        <option value="nl">Dutch</option>
+        <option value="nn">Norwegian Nynorsk</option>
+        <option value="no">Norwegian</option>
+        <option value="nr">South Ndebele</option>
+        <option value="nv">Navajo</option>
+        <option value="ny">Chichewa</option>
+        <option value="oc">Occitan</option>
+        <option value="oj">Ojibwa</option>
+        <option value="om">Oromo</option>
+        <option value="or">Oriya</option>
+        <option value="os">Ossetian</option>
+        <option value="pa">Punjabi</option>
+        <option value="pi">Pali</option>
+        <option value="pl">Polish</option>
+        <option value="ps">Pashto</option>
+        <option value="pt">Portuguese</option>
+        <option value="qu">Quechua</option>
+        <option value="rm">Romansh</option>
+        <option value="rn">Rundi</option>
+        <option value="ro">Romanian</option>
+        <option value="ru">Russian</option>
+        <option value="rw">Kinyarwanda</option>
+        <option value="sa">Sanskrit</option>
+        <option value="sc">Sardinian</option>
+        <option value="sd">Sindhi</option>
+        <option value="se">Northern Sami</option>
+        <option value="sg">Sango</option>
+        <option value="si">Sinhala</option>
+        <option value="sk">Slovak</option>
+        <option value="sl">Slovenian</option>
+        <option value="sm">Samoan</option>
+        <option value="sn">Shona</option>
+        <option value="so">Somali</option>
+        <option value="sq">Albanian</option>
+        <option value="sr">Serbian</option>
+        <option value="ss">Swati</option>
+        <option value="st">Southern Sotho</option>
+        <option value="su">Sundanese</option>
+        <option value="sv">Swedish</option>
+        <option value="sw">Swahili</option>
+        <option value="ta">Tamil</option>
+        <option value="te">Telugu</option>
+        <option value="tg">Tajik</option>
+        <option value="th">Thai</option>
+        <option value="ti">Tigrinya</option>
+        <option value="tk">Turkmen</option>
+        <option value="tl">Tagalog</option>
+        <option value="tn">Tswana</option>
+        <option value="to">Tonga</option>
+        <option value="tr">Turkish</option>
+        <option value="ts">Tsonga</option>
+        <option value="tt">Tatar</option>
+        <option value="tw">Twi</option>
+        <option value="ty">Tahitian</option>
+        <option value="ug">Uighur</option>
+        <option value="uk">Ukrainian</option>
+        <option value="ur">Urdu</option>
+        <option value="uz">Uzbek</option>
+        <option value="ve">Venda</option>
+        <option value="vi">Vietnamese</option>
+        <option value="vo">Volapük</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="customLanguage">Or enter a custom language (optional):</label>
+      <input type="text" id="customLanguage" placeholder="e.g., Tamil">
+    </div>
+    <div class="form-group">
+      <label for="fullName">Enter your full name here:</label>
+      <textarea id="fullName" required placeholder="Full name (required)"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="birthYear">Enter your birth year here (e.g., 1990):</label>
+      <input type="number" id="birthYear" required placeholder="Birth year (required)" min="1800" max="2026">
+    </div>
+    <div class="form-group">
+      <label for="birthMonth">Select your birth month here:</label>
+      <select id="birthMonth" required>
+        <option value="">Select Month</option>
+        <option value="January">January</option>
+        <option value="February">February</option>
+        <option value="March">March</option>
+        <option value="April">April</option>
+        <option value="May">May</option>
+        <option value="June">June</option>
+        <option value="July">July</option>
+        <option value="August">August</option>
+        <option value="September">September</option>
+        <option value="October">October</option>
+        <option value="November">November</option>
+        <option value="December">December</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="birthDay">Select your birth day here:</label>
+      <select id="birthDay" required>
+        <option value="">Select Day</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Select correct time here:</label>
+      <div class="time-inputs">
+        <input type="number" id="hour" placeholder="Hour (1-12)" min="1" max="12" required>
+        <input type="number" id="minute" placeholder="Minute (0-59)" min="0" max="59" required>
+        <select id="period" required>
+          <option value="">AM/PM</option>
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="birthPlace">Enter your birth place here (Country, Region, District, Place):</label>
+      <textarea id="birthPlace" placeholder="e.g., America, NY, Suos" required></textarea>
+    </div>
+    <button id="letsGoBtn">Let's Go</button>
+    <button id="resetBtn">Reset</button>
+    <h2 id="conversationHeader">Conversations</h2>
+    <div id="loading">AI is predicting now, please wait...</div>
+    <div id="responseArea"></div>
+    <div id="askSection" style="display: none; margin-top: 20px;">
+      <div class="form-group">
+        <label for="askMore">Ask more:</label>
+        <textarea id="askMore" placeholder="Type your question here..."></textarea>
+      </div>
+      <button id="askBtn" disabled>Ask</button>
+    </div>
+  </div>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+    const apiUrl = "https://chatgpt.hazex.workers.dev/?ques=";
+
+    // Load saved form data if available
+    function loadSavedData() {
+      const savedData = localStorage.getItem("futurePredictorData");
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        document.getElementById("language").value = data.language || "";
+        document.getElementById("customLanguage").value = data.customLanguage || "";
+        document.getElementById("fullName").value = data.fullName || "";
+        document.getElementById("birthYear").value = data.birthYear || "";
+        document.getElementById("birthMonth").value = data.birthMonth || "";
+        document.getElementById("birthDay").value = data.birthDay || "";
+        document.getElementById("hour").value = data.hour || "";
+        document.getElementById("minute").value = data.minute || "";
+        document.getElementById("period").value = data.period || "";
+        document.getElementById("birthPlace").value = data.birthPlace || "";
+      }
+    }
+
+    // Save form data to localStorage
+    function saveFormData() {
+      const formData = {
+        language: document.getElementById("language").value,
+        customLanguage: document.getElementById("customLanguage").value,
+        fullName: document.getElementById("fullName").value,
+        birthYear: document.getElementById("birthYear").value,
+        birthMonth: document.getElementById("birthMonth").value,
+        birthDay: document.getElementById("birthDay").value,
+        hour: document.getElementById("hour").value,
+        minute: document.getElementById("minute").value,
+        period: document.getElementById("period").value,
+        birthPlace: document.getElementById("birthPlace").value
+      };
+      localStorage.setItem("futurePredictorData", JSON.stringify(formData));
+    }
+
+    // Populate birth day
+    const birthDaySelect = document.getElementById("birthDay");
+    for (let day = 1; day <= 31; day++) {
+      const option = document.createElement("option");
+      option.value = day;
+      option.textContent = day;
+      birthDaySelect.appendChild(option);
+    }
+
+    // Load saved data on page load
+    loadSavedData();
+
+    // Form submission
+    document.getElementById("letsGoBtn").addEventListener("click", () => {
+      const language = document.getElementById("language").value || document.getElementById("customLanguage").value;
+      const fullName = document.getElementById("fullName").value.trim();
+      const birthYear = document.getElementById("birthYear").value;
+      const birthMonth = document.getElementById("birthMonth").value;
+      const birthDay = document.getElementById("birthDay").value;
+      const hour = document.getElementById("hour").value;
+      const minute = document.getElementById("minute").value;
+      const period = document.getElementById("period").value;
+      const birthPlace = document.getElementById("birthPlace").value.trim();
+
+      // Validate inputs
+      if (!fullName || !birthYear || !birthMonth || !birthDay || !hour || !minute || !period || !birthPlace) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+      if (birthYear < 1800 || birthYear > 2026) {
+        alert("Please enter a valid birth year between 1800 and 2026.");
+        return;
+      }
+
+      // Save form data
+      saveFormData();
+
+      const prompt = `You are an AI Future Predictor developed by the Accessible Resource Team, led by SM Ripon with support from Sujan Rai. Your purpose is to provide professional astrological predictions based on the user's birth chart.
+
+If the user input contains a question, respond only with a summarized prediction in the user's preferred language: ${language}, without any introduction or mention of the developers. Use full Markdown formatting for clear and structured responses.
+
+If no question is provided, include a brief introduction about yourself and your developers, followed by a detailed prediction including:
+- A summary of the user's birth chart (Kundali),
+- Possible upcoming accidents,
+- Their life goals or destiny path.
+
+Always respond in a professional tone and in the user's preferred language: ${language}. Use full Markdown formatting (e.g., headers, lists, bold, italics) to structure the response clearly. If the user asks for non-astrological or non-prediction-related queries, politely state that you can only assist with astrology-based predictions.
+
+User Information:
+- Full Name: ${fullName}
+- Date of Birth: ${birthYear}-${birthMonth}-${birthDay}
+- Time of Birth: ${hour}:${minute} ${period}
+- Place of Birth: ${birthPlace}
+- Preferred Language: ${language}
+- User Question: None
+
+Generate a prediction based on the user's astrological data, formatted in Markdown.`;
+
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("responseArea").style.display = "none";
+      document.getElementById("conversationHeader").style.display = "block";
+
+      fetch(apiUrl + encodeURIComponent(prompt))
+        .then(response => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById("loading").style.display = "none";
+          if (data && data.answer) {
+            const responseArea = document.getElementById("responseArea");
+            responseArea.style.display = "block";
+            responseArea.innerHTML = marked.parse(data.answer);
+
+            const buttonDiv = document.createElement("div");
+            buttonDiv.style.marginTop = "20px";
+
+            const copyBtn = document.createElement("button");
+            copyBtn.id = "copyBtn";
+            copyBtn.textContent = "Copy Prediction";
+            copyBtn.addEventListener("click", () => {
+              navigator.clipboard.writeText(data.answer);
+              alert("Prediction copied to clipboard!");
+            });
+
+            const shareBtn = document.createElement("button");
+            shareBtn.id = "shareBtn";
+            shareBtn.textContent = "Share Prediction";
+            shareBtn.addEventListener("click", () => {
+              const shareData = {
+                title: "AI Future Prediction",
+                text: data.answer,
+                url: window.location.href
+              };
+              navigator.share(shareData).catch(err => console.error("Share failed:", err));
+            });
+
+            const downloadBtn = document.createElement("button");
+            downloadBtn.id = "downloadBtn";
+            downloadBtn.textContent = "Download Prediction";
+            downloadBtn.addEventListener("click", () => {
+              const doc = new jsPDF();
+              doc.text(data.answer, 10, 10);
+              doc.save("prediction.pdf");
+            });
+
+            buttonDiv.appendChild(copyBtn);
+            buttonDiv.appendChild(shareBtn);
+            buttonDiv.appendChild(downloadBtn);
+            responseArea.appendChild(buttonDiv);
+
+            document.getElementById("askSection").style.display = "block";
+          } else {
+            document.getElementById("responseArea").style.display = "block";
+            document.getElementById("responseArea").innerHTML = '<p class="error">Failed to process the response.</p>';
+          }
+        })
+        .catch(error => {
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("responseArea").style.display = "block";
+          document.getElementById("responseArea").innerHTML = '<p class="error">An error occurred while processing the request: ' + error.message + '</p>';
+        });
+    });
+
+    // Reset button
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("language").value = "";
+      document.getElementById("customLanguage").value = "";
+      document.getElementById("fullName").value = "";
+      document.getElementById("birthYear").value = "";
+      document.getElementById("birthMonth").value = "";
+      document.getElementById("birthDay").value = "";
+      document.getElementById("hour").value = "";
+      document.getElementById("minute").value = "";
+      document.getElementById("period").value = "";
+      document.getElementById("birthPlace").value = "";
+      document.getElementById("responseArea").style.display = "none";
+      document.getElementById("askSection").style.display = "none";
+      document.getElementById("askMore").value = "";
+      document.getElementById("askBtn").disabled = true;
+      document.getElementById("conversationHeader").style.display = "none";
+      localStorage.removeItem("futurePredictorData");
+    });
+
+    // Ask more functionality
+    const askMoreInput = document.getElementById("askMore");
+    const askBtn = document.getElementById("askBtn");
+
+    askMoreInput.addEventListener("input", () => {
+      askBtn.disabled = askMoreInput.value.trim().length === 0;
+    });
+
+    askBtn.addEventListener("click", () => {
+      const question = askMoreInput.value.trim();
+      if (!question) return;
+
+      const language = document.getElementById("language").value || document.getElementById("customLanguage").value;
+      const fullName = document.getElementById("fullName").value.trim();
+      const birthYear = document.getElementById("birthYear").value;
+      const birthMonth = document.getElementById("birthMonth").value;
+      const birthDay = document.getElementById("birthDay").value;
+      const hour = document.getElementById("hour").value;
+      const minute = document.getElementById("minute").value;
+      const period = document.getElementById("period").value;
+      const birthPlace = document.getElementById("birthPlace").value.trim();
+
+      const prompt = `You are an AI Future Predictor developed by the Accessible Resource Team, led by SM Ripon with support from Sujan Rai. Your role is to provide professional astrological predictions based on the user's birth chart.
+
+Respond in the user's preferred language: ${language}. Do not include developer or team information unless directly asked. Maintain a professional and respectful tone. Use full Markdown formatting (e.g., headers, lists, bold, italics) to structure the response clearly.
+
+Important: You are strictly designed for astrology and future predictions. If the user asks something unrelated to astrology, politely inform them that you can only handle astrology-based queries.
+
+User Information:
+- Full Name: ${fullName}
+- Date of Birth: ${birthYear}-${birthMonth}-${birthDay}
+- Time of Birth: ${hour}:${minute} ${period}
+- Place of Birth: ${birthPlace}
+- Preferred Language: ${language}
+- User Question: ${question}
+
+Generate a summarized astrological prediction based on the user's question and astrological data, formatted in Markdown.`;
+
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("responseArea").style.display = "none";
+
+      fetch(apiUrl + encodeURIComponent(prompt))
+        .then(response => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById("loading").style.display = "none";
+          if (data && data.answer) {
+            const responseArea = document.getElementById("responseArea");
+            responseArea.style.display = "block";
+            responseArea.innerHTML = marked.parse(data.answer);
+
+            const buttonDiv = document.createElement("div");
+            buttonDiv.style.marginTop = "20px";
+
+            const copyBtn = document.createElement("button");
+            copyBtn.id = "copyBtn";
+            copyBtn.textContent = "Copy Prediction";
+            copyBtn.addEventListener("click", () => {
+              navigator.clipboard.writeText(data.answer);
+              alert("Prediction copied to clipboard!");
+            });
+
+            const shareBtn = document.createElement("button");
+            shareBtn.id = "shareBtn";
+            shareBtn.textContent = "Share Prediction";
+            shareBtn.addEventListener("click", () => {
+              const shareData = {
+                title: "AI Future Prediction",
+                text: data.answer,
+                url: window.location.href
+              };
+              navigator.share(shareData).catch(err => console.error("Share failed:", err));
+            });
+
+            const downloadBtn = document.createElement("button");
+            downloadBtn.id = "downloadBtn";
+            downloadBtn.textContent = "Download Prediction";
+            downloadBtn.addEventListener("click", () => {
+              const doc = new jsPDF();
+              doc.text(data.answer, 10, 10);
+              doc.save("prediction.pdf");
+            });
+
+            buttonDiv.appendChild(copyBtn);
+            buttonDiv.appendChild(shareBtn);
+            buttonDiv.appendChild(downloadBtn);
+            responseArea.appendChild(buttonDiv);
+
+            askMoreInput.value = "";
+            askBtn.disabled = true;
+          } else {
+            document.getElementById("responseArea").style.display = "block";
+            document.getElementById("responseArea").innerHTML = '<p class="error">Failed to process the response.</p>';
+          }
+        })
+        .catch(error => {
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("responseArea").style.display = "block";
+          document.getElementById("responseArea").innerHTML = '<p class="error">An error occurred while processing the request: ' + error.message + '</p>';
+        });
+    });
+  </script>
+</body>
+</html>
